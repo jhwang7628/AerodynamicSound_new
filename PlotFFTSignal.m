@@ -1,4 +1,4 @@
-function fftPv = PlotFFTSignal(T, Pv)
+function [f,fftPv] = PlotFFTSignal(T, Pv)
 
 Fs = 1/(T(2)-T(1));
 NFFT = 2^nextpow2(length(T));

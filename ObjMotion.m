@@ -1,4 +1,3 @@
-%
 % SPECIFY THE OBJECT MOTION (IN THE FUTURE CAN USE EXPERIMENTAL MOTION TRACKER)
    % discretize and describe the body motion in space, including position and velocity (speed and direction) for each element.
    % render the body motion animation? 

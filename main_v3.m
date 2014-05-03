@@ -15,7 +15,7 @@ end
 % INITIALIZE THE VARIABLES
 tend = 3;
 T = linspace(0,tend,SampFreq.*tend).';
-NumElem = 30; % Number of discretization of the object
+NumElem = 5; % Number of discretization of the object
 v0 = 10;
 dt = T(2) - T(1);
 c0 = 340;
@@ -25,6 +25,7 @@ gl_g = zeros(length(T),NumElem,3);
 if nargin < 3
    [PRaw] = TextureConstruc;
 else 
+   PrevData(:,1) = PrevData(:,1) - PrevData(1,1); % shift the texture back to zero
    TexTable_g = PrevData;
    % PRaw = sprintf('N/A');
 end

@@ -8,12 +8,21 @@ function [PRaw, TexTable_g] = TextureConstruc
 global TexTable_g
 
 % Read the table from Fluent
-Y = ReadFluent;
+[Y,FileStart,FileEnd] = ReadFluent;
 PRaw = squeeze(Y(:,2,:));
 
 % Compute the sound texture by integrating the pressure around the object and taking the time derivatives.
-% TexTable_g = CompTexture(Y,5.068274,5.079914,0.00001,[]); % CompTexture(Y,s_start,s_stop,ds,flag)
-TexTable_g = CompTexture(Y,9.800004,9.887094,[]); % CompTexture(Y,s_start,s_stop,ds,flag)
+
+% Read data for Re120
+% TexTable_g = CompTexture(Y,5.068274,5.079914,[]); % CompTexture(Y,s_start,s_stop,ds,flag)
+
+% Read data for Re1200
+TexTable_g = CompTexture(Y,FileStart,FileEnd,[]); % CompTexture(Y,s_start,s_stop,ds,flag)
+
+
+% TexTable_g = CompTexture(Y,10.155914,10.208764,[]); % CompTexture(Y,s_start,s_stop,ds,flag)
+
+
 
 
 end

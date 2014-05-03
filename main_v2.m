@@ -1,7 +1,7 @@
 % IMPLEMENTATION OF THE CALCULATION OF AERODYNAMIC SOUND USING SOUND TEXTURE
 % Following: Real-time Rendering of Aerodynamic Sound using Sound Textures based on Computational Fluid Dynamics
 
-function [T,Pv,PRaw,X,U,vl,O,TexTable_g] = main_v2(ReceiPos,SampFreq,PrevData)
+function [T,Pv,X,U,vl,O,TexTable_g] = main_v2(ReceiPos,SampFreq,PrevData)
 
 global TexTable_g gl_g O
 
@@ -28,8 +28,8 @@ gl_g = zeros(length(T),NumElem,3);
 if nargin < 3
    [PRaw] = TextureConstruc;
 else 
+   PrevData(:,1) = PrevData(:,1) - PrevData(1,1); % shift the texture back to zero   
    TexTable_g = PrevData;
-   PRaw = sprintf('N/A');
 end
    
 
