@@ -1,7 +1,7 @@
 % IMPLEMENTATION OF THE CALCULATION OF AERODYNAMIC SOUND USING SOUND TEXTURE
 % Following: Real-time Rendering of Aerodynamic Sound using Sound Textures based on Computational Fluid Dynamics
 
-function [T,Pv,X,U,vl,O,TexTable_g] = main_v2(ReceiPos,SampFreq,PrevData)
+function [T,Pv,X,U,vl,O,TexTable_g] = main_v3(ReceiPos,SampFreq,PrevData)
 
 global TexTable_g gl_g O T
 
@@ -13,7 +13,7 @@ else
 end
 
 % INITIALIZE THE VARIABLES
-tend = 3;
+tend = 5;
 T = linspace(0,tend,SampFreq.*tend).';
 NumElem = 5; % Number of discretization of the object
 v0 = 10;
@@ -40,8 +40,12 @@ vl= zeros(length(T),NumElem); % Speed of the element
    
 S_k = T(1);
 Pv = zeros(1,length(T));
+
+[WS,Tws,ws] = WindSpeedConstruc(T,10);
+WS = WS./max(WS).*35; % Scale the wind speed
+
 for kk = 1:length(T)
-      [ObjPosition, ObjSpeed] = ObjMotion2(T(kk),NumElem,'standing_wind_random');
+      [ObjPosition, ObjSpeed] = ObjMotion2(T(kk),WS(kk),NumElem,'standing_wind_random');
       vl(kk,:) = ObjSpeed; 
        X(kk,:,:) = ObjPosition;
 

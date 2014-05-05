@@ -3,6 +3,7 @@ function x = RandWindSpeed(k, lambda)
 % k      = 1; % shape 
 % lambda = 1; % scale
 
+
 x = lambda.*(-log(1-rand(1))).^(1/k);
 
 
