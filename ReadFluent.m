@@ -5,12 +5,15 @@ function [Y,FileStart,FileEnd] = ReadFluent
 
   % Read data Re1200
   % data_folder = '/Users/jui-hsienwang/Documents/MATLAB/Aerodynamic_sound_Matlab/Fluent_data/Re1200/Jui-04-28-Pressure/'
-  data_folder = '/Users/jui-hsienwang/Documents/MATLAB/Aerodynamic_sound_Matlab/Fluent_data/Re1200/Jui-05-02-Pressure/'
+  % data_folder = '/Users/jui-hsienwang/Documents/MATLAB/Aerodynamic_sound_Matlab/Fluent_data/Re1200/Jui-05-02-Pressure/'
   
 
   % Read data Re12000
   % data_folder = '/Users/jui-hsienwang/Documents/MATLAB/Aerodynamic_sound_Matlab/Fluent_data/Re12000/Jui-04-28-Pressure3/'
-  data_foler = '/Users/jui-hsienwang/Documents/MATLAB/Aerodynamic_sound_Matlab/Fluent_data/Re12000/Jui-05-02-Pressure'
+  % data_folder = '/Users/jui-hsienwang/Documents/MATLAB/Aerodynamic_sound_Matlab/Fluent_data/Re12000/Jui-05-02-Pressure/'
+  % data_folder = '/Users/jui-hsienwang/Documents/MATLAB/Aerodynamic_sound_Matlab/Fluent_data/Re12000/Jui-05-02-refine180000-Pressure/'
+  data_folder = '/Users/jui-hsienwang/Documents/MATLAB/Aerodynamic_sound_Matlab/Fluent_data/Re12000/Jui-05-02-ke-Pressure/'
+ 
   
   FileLs = dir([data_folder, 'Pressure*']);
   FileStart = str2num(FileLs(1).name(10:end));
