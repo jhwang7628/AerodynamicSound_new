@@ -11,6 +11,7 @@ Tws = linspace(tstart, tend, n_sample); % uniformly sample the wind velocity cha
 for ii = 1:n_sample
    ws(ii) = RandWindSpeed(3,15);
 end
+
 % ws = ws + min(ws);
 
 % polydegree = round(n_sample*0.8)
@@ -26,5 +27,16 @@ end
 if min(WS) < 0
    ws = ws + abs(min(WS));
    WS = WS + abs(min(WS));
+
+end
+
+
+
+
+
+WS = SynWindSpeed(T);
+
+
+
 
 end

@@ -1,7 +1,7 @@
 % IMPLEMENTATION OF THE CALCULATION OF AERODYNAMIC SOUND USING SOUND TEXTURE
 % Following: Real-time Rendering of Aerodynamic Sound using Sound Textures based on Computational Fluid Dynamics
 
-function [T,Pv,X,U,vl,O,TexTable_g] = main_v3(ReceiPos,SampFreq,PrevData)
+function [T,Pv,X,U,vl,O,S_k_mon] = main_v3(ReceiPos,SampFreq,PrevData)
 
 global TexTable_g gl_g O T
 
@@ -15,7 +15,7 @@ end
 % INITIALIZE THE VARIABLES
 tend = 5;
 T = linspace(0,tend,SampFreq.*tend).';
-NumElem = 5; % Number of discretization of the object
+NumElem = 10; % Number of discretization of the object
 v0 = 10;
 dt = T(2) - T(1);
 c0 = 340;
@@ -38,11 +38,13 @@ X = zeros(length(T),3,NumElem);
 vl= zeros(length(T),NumElem); % Speed of the element
 
    
-S_k = T(1);
+S_k = ones(1,NumElem).*T(1);
 Pv = zeros(1,length(T));
 
 [WS,Tws,ws] = WindSpeedConstruc(T,10);
-WS = WS./max(WS).*35; % Scale the wind speed
+% WS = WS./max(WS).*35; % Scale the wind speed
+
+S_k_mon = zeros(length(T),NumElem);
 
 for kk = 1:length(T)
       [ObjPosition, ObjSpeed] = ObjMotion2(T(kk),WS(kk),NumElem,'standing_wind_random');
@@ -51,10 +53,10 @@ for kk = 1:length(T)
 
    pl = zeros(1,NumElem);
    for ll = 1:NumElem
-      [S_k,gl_g(kk,ll,:)] = CompGFunc(ObjSpeed(ll),v0,dt,S_k);
+      [S_k(ll),gl_g(kk,ll,:)] = CompGFunc(ObjSpeed(ll),v0,dt,S_k(ll));
 
       pl(ll) = CompPReceiver2(ObjPosition(:,ll),c0,ll,T(kk));
-      % S_k_mon(kk) = S_k;
+      S_k_mon(kk,ll) = S_k(ll);
    end
    Pv(kk) = sum(pl);
 end

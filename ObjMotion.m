@@ -19,7 +19,7 @@ if strcmpi(flag, 'linear') % Linear motion
    
    % Constant velocity motion in x-direction with four partition
    for ii = 1:size(U,3)
-      U(:,1,ii) = 30.*ones(length(T),1);
+      U(:,1,ii) = 15.*ones(length(T),1);
    end 
 
    dt = T(2)-T(1);
@@ -49,6 +49,7 @@ elseif strcmpi(flag, 'rotate') % harmonic rotation
    % Ri = [0, 10/4, 20/4, 30/4, 10]; 
    om   = vmax/Ri(end);
    Tswing = pi^2/2*Ri(end)/vmax;
+   % Tswing = 3;
    % Tswing = 0.1;
    % Tswing = 0.0197;
    % Tswing = 0.197;
