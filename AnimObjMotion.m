@@ -10,7 +10,7 @@ if strcmpi(flag,'anim') == 1
          ZPt = [ZPt, X(ii,3,jj)];
       end
       if ii == 1
-         figure, set(gcf,'outerposition', [800,0,400,300])
+         figure, set(gcf,'outerposition', [800,0,800,600])
                  h1 = plot3(XPt, YPt, ZPt, 'ko-'); hold on,
                  h2 = plot3(O(1),O(2),O(3),'ro');
       else

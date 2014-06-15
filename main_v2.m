@@ -55,7 +55,7 @@ S_k = ones(1,NumElem).*T(1);
 for ll = 1:NumElem
    for kk = 1:length(T)
       [S_k(ll),gl_g(kk,ll,:)] = CompGFunc(vl(kk,ll),v0,dt,S_k(ll));
-      S_k_mon(ll,kk) = S_k(ll);
+      S_k_mon(kk,ll) = S_k(ll);
       
    end
 end

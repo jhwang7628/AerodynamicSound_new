@@ -11,8 +11,8 @@ if strcmpi(flag, 'standing_wind_random')
 
 %    ObjSpeed  = ones(1,NumElem).*RandWindSpeed(k, lambda);
 %    ObjSpeed  = ones(1,NumElem).*HarmWindSpeed(t_k);
-   ObjSpeed  = ones(1,NumElem).*20;
-%    ObjSpeed  = ones(1,NumElem).*WS;
+%    ObjSpeed  = ones(1,NumElem).*20;
+   ObjSpeed  = ones(1,NumElem).*WS;
    
    for ii = 1:NumElem
       ObjPosition(3,ii) = l/(NumElem-1)*(ii-1); 
