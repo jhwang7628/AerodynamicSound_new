@@ -1,6 +1,6 @@
 % Sort the data so the texture is represented by a function w(l,s_k,c_l,v_0), (l: element, s_k: texture, c_l: velocity direction, v_0: base vel.)
 
-function TexTable = CompTexture(Y,s_start,s_stop,flag)
+function [TexTable] = CompTexture(Y,s_start,s_stop,flag)
 
 % WARNING: MODIFY THIS LINE WHEN YOU GET THE TEXTURE TIME DISCRETIZATION
 % S1 = linspace(s_start,s_stop,size(Y,3)); % Texture domain time
