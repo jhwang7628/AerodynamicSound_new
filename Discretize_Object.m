@@ -12,8 +12,10 @@ function Discretize_Object(NumSource)
 %   the object is usually slender and therefore 
 %   has one longitudinal direction. like a club 
 %   or a sword or something like that
+%
+%   Depends on the mesh.
 
-
+% Use something like an octree data structure
 
 
 end
