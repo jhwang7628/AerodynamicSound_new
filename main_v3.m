@@ -49,7 +49,7 @@ S_k_mon = zeros(length(T),NumElem);
 for kk = 1:length(T)
       [ObjPosition, ObjSpeed] = ObjMotion2(T(kk),WS(kk),NumElem,'standing_wind_random');
       vl(kk,:) = ObjSpeed; 
-       X(kk,:,:) = ObjPosition;
+      X(kk,:,:) = ObjPosition;
 
    pl = zeros(1,NumElem);
    for ll = 1:NumElem
