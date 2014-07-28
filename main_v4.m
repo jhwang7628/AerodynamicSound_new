@@ -167,10 +167,12 @@ vl = ObjMotion3(T);
 
 %%%% Can probably parallelize/vectorize this part of the code %%%%
 CurrentTime = ones(1,NumSources).*T(1);
+
+[CurrentTime(jj), Pl_ii] = CompPReceiver3(CurrentTime(jj), T,vl(ii,jj),v0,dt,c0);
+Pv(ii) = Pv(ii) + Pl_ii;
+
 for ii = 1:length(T)
     for jj = 2:NumSources
-          [CurrentTime(jj), Pl_ii] = CompPReceiver3(CurrentTime(jj), T,vl(ii,jj),v0,dt,c0);
-          Pv(ii) = Pv(ii) + Pl_ii;
     end
 end
 %
