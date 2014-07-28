@@ -6,15 +6,15 @@
 %
 %
 %
-function main_v4
+function [Pv] = main_v4
 
-global Table
+global Table NumSources
 
-NumSources=10;
+NumSources=2;
 SampFreq=16000;
 
-ConstructTable(NumSources); 
-SoundRendering(SampFreq,NumSources);
+ConstructTable; 
+Pv = SoundRendering(SampFreq);
 
 
 end
@@ -24,9 +24,9 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function Table = ConstructTable(NumSources) 
+function Table = ConstructTable 
 
-global Table
+global Table NumSources
 
 % Read-in spec for how many orientation and inflow speed we want to do. 
 % Table is a class. Each object in the class records the simulation description of a unique point in the simulation parameter space. 
@@ -38,10 +38,9 @@ global Table
 load('./SimSpec_files/simulation_spec.mat');
 
 LenTable  = length(Table);
-NumSources = 10;
 
-for ii = 1:LenTable 
-    ComputeTexture(ii, NumSources); 
+for CurrentTableEntry = 1:LenTable 
+    ComputeTexture(CurrentTableEntry); 
 end
 
 
@@ -52,14 +51,14 @@ end
 
 %%%%%%%%
 
-function ComputeTexture(ii, NumSources)
+function ComputeTexture(CurrentTableEntry )
 
-global Table
+global Table NumSources
 
-[TextureTime,DragTexture] = ReadSimulation(Table(ii).simulationFile); 
+[TextureTime,DragTexture] = ReadSimulation(Table(CurrentTableEntry).simulationFile); 
 % Discretize_Object(NumSources); % First treat the object as acoustically compact.
 
-CompTexture2(ii, TextureTime,DragTexture);
+CompTexture2(CurrentTableEntry, TextureTime,DragTexture);
 
 
 
@@ -115,7 +114,7 @@ end
 
 %%%%%%%%
 
-function CompTexture2(ii, TextureTime,DragTexture);
+function CompTexture2(CurrentTableEntry, TextureTime,DragTexture);
 
 global Table
 
@@ -140,42 +139,64 @@ for jj = 1:3
    w_l(end,    jj) =-(4.*DragTexture(end-1,jj) - DragTexture(end-2,jj) - 3.*DragTexture(end,jj))/2/dT;
 end
 
-Table(ii).TextureTime = TextureTime; 
-Table(ii).Texture = w_l;
+Table(CurrentTableEntry).TextureTime = TextureTime; 
+Table(CurrentTableEntry).Texture = w_l;
 
 
 end
 
 
-function SoundRendering(SampFreq,NumSources)
+function Pv = SoundRendering(SampFreq)
 
-global Table
+global Table NumSources
 
 % INITIALIZE THE VARIABLES
 tend = 5;
 T = linspace(0,tend,SampFreq.*tend).';
-NumSources = 10; % Number of discretization of the object
 v0 = 10;
 dt = T(2) - T(1);
 c0 = 340;
 
 Pv = zeros(length(T),1);
 
-vl = ObjMotion3;
-CurrentTime = T(1);
+vl = ObjMotion3(T);
+
+
+%%%% Can probably parallelize/vectorize this part of the code %%%%
+CurrentTime = ones(1,NumSources).*T(1);
 for ii = 1:length(T)
-    [CurrentTime, Pv(ii)] = CompPReceiver3(CurrentTime, vl(ii));
+    for jj = 2:NumSources
+          [CurrentTime(jj), Pl_ii] = CompPReceiver3(CurrentTime(jj), T,vl(ii,jj),v0,dt,c0);
+          Pv(ii) = Pv(ii) + Pl_ii;
+    end
 end
+%
+
+% for jj = 2:NumSources
+%     tic
+%   CurrentTime = T(1);
+%   fprintf('Calculating the pressure of source # %2.0i \n', jj)
+%   for ii = 1:length(T)
+%       [CurrentTime, Pv(ii)] = CompPReceiver3(CurrentTime, vl(ii,jj));
+%   end
+%   toc
+% 
+%   
+% end
 
 % gl_g = zeros(length(T),NumSources,3); 
 
 
 % Nested function
 % ObjMotion3 describe the object motion, copied from the file ObjMotion.m
-function vl = ObjMotion3(flag)
+%
+end
+function vl = ObjMotion3(T,flag)
+
+global NumSources
 
     % default for flag is rotate
-    if nargin < 1 
+    if nargin < 3
         flag = 'rotate';
     end
 
@@ -219,28 +240,44 @@ function vl = ObjMotion3(flag)
 %
 %      % Analytical expression derived from prescribing theta
        omega = pi^2/2/Tswing.*sin(2*pi.*T./Tswing);
-    
+
        for jj = 1:NumSources
            vl(:,jj) = omega.*Ri(jj);
        end
+
     end
 
 
 end
 
 % Nested function
-function [CurrentTime, Pv_ii] = CompPReceiver3(CurrentTime, vl_ii)
+function [CurrentTime, Pl_ii] = CompPReceiver3(CurrentTime, T,vl_ii,v0,dt,c0)
 
 % Resample and interpolate the texture
 %
 
+VelocityRatio = vl_ii./v0;
+
+% Time reindexing
+CurrentTime = VelocityRatio.*dt + CurrentTime; 
+
+% Looping the texture
+if CurrentTime >= max(T)
+    CurrentTime = rem(CurrentTime,T(end));
+end
 
 
-
-
+% Interpolate the texture using the CurrentTime
+gl = VelocityRatio.^6.*InterpolateTexture(CurrentTime, vl_ii);
 
 % Compute the Pressure at the receiver
+% Neglecting the receiver position for now
 %
+% rl = norm(ObjPosition-O);
+rl = 0.5;
+Cl = 1/(4*pi*c0*rl^2);
+
+Pl_ii = Cl*dot(gl,rl.*ones(1,3));
 
 
 
@@ -248,8 +285,51 @@ function [CurrentTime, Pv_ii] = CompPReceiver3(CurrentTime, vl_ii)
 end
 
 
+
+
+% Texture interpolation
+% Assume there is only one table entry..
+function [w_lInterpolated] = InterpolateTexture(CurrentTime, vl_ii)
+
+global Table
+
+SearchDomain = Table(1).TextureTime;; 
+
+CurrentPointerRange=1:length(SearchDomain);
+
+while true
+    if length(SearchDomain) <= 2 
+        w_lPointer = CurrentPointerRange(1); 
+        break; 
+    end
+
+    MidPoint = ceil(length(SearchDomain)/2);
+
+%     [length(SearchDomain),MidPoint,CurrentTime,SearchDomain(MidPoint)];
+
+    if CurrentTime == SearchDomain(MidPoint)
+        w_lPointer = CurrentPointerRange(MidPoint);
+        break;
+    elseif CurrentTime > SearchDomain(MidPoint) 
+        SearchDomain = SearchDomain(MidPoint:end);
+        CurrentPointerRange = CurrentPointerRange(MidPoint:end);
+    else
+        SearchDomain = SearchDomain(1:MidPoint);
+        CurrentPointerRange = CurrentPointerRange(1:MidPoint);
+    end
+
+    % CurrentPointerRange(MidPoint)
+
 end
 
+
+w_lInterpolated  = Table(1).Texture(w_lPointer,:); 
+
+
+end
+
+
+    
 
 
 
