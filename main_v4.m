@@ -10,11 +10,13 @@ function [Pv] = main_v4
 
 global Table NumSources
 
-NumSources=2;
+NumSources=10;
 SampFreq=16000;
 
 ConstructTable; 
 Pv = SoundRendering(SampFreq);
+
+figure, plot(Table(1).Texture)
 
 
 end
@@ -244,6 +246,8 @@ global NumSources
        for jj = 1:NumSources
            vl(:,jj) = omega.*Ri(jj);
        end
+
+       
 
     end
 

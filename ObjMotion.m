@@ -47,7 +47,6 @@ elseif strcmpi(flag, 'rotate') % harmonic rotation
       Ri(ii) = 10*(ii-1)/(NumElem-1);
    end
    % Ri = [0, 10/4, 20/4, 30/4, 10]; 
-   om   = vmax/Ri(end);
    Tswing = pi^2/2*Ri(end)/vmax;
    % Tswing = 3;
    % Tswing = 0.1;

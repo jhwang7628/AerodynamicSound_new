@@ -11,7 +11,8 @@ scal = 1;
 extension = 3;
 
 % A = load('ForcesProcessed_matlab'); 
-load('forcesProcessed_matlab.mat');
+% load('forcesProcessed_matlab.mat');
+A = load('test_data.txt');
 
 cutoff = 2;
 c0 = 330; 
