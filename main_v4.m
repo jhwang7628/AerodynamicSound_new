@@ -1,12 +1,6 @@
 % Dobashi implementation
 %
-%
-%
-%
-%
-%
-%
-function [Pv] = main_v4
+function [Pv,player] = main_v4
 
 global Table NumSources
 
@@ -14,9 +8,12 @@ NumSources=10;
 SampFreq=16000;
 
 ConstructTable; 
-Pv = SoundRendering(SampFreq);
+Pv = SoundPressure(SampFreq);
 
-figure, plot(Table(1).Texture)
+% Sound rendering
+player = audioplayer(Pv,SampFreq);
+
+% figure, plot(Table(1).Texture)
 
 
 end
@@ -148,7 +145,7 @@ Table(CurrentTableEntry).Texture = w_l;
 end
 
 
-function Pv = SoundRendering(SampFreq)
+function Pv = SoundPressure(SampFreq)
 
 global Table NumSources
 
@@ -170,6 +167,8 @@ for ii = 1:length(T)
     [CurrentTime, Pl_ii] = CompPReceiver3(CurrentTime, T, vl(ii,:), v0, dt, c0);
     Pv(ii) = sum(Pl_ii);
 end
+
+player = audioplayer(Pv,SampFreq);
 
 
 
