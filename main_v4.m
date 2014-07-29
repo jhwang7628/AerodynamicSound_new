@@ -257,6 +257,8 @@ end
 % Nested function
 function [CurrentTime, Pl_ii] = CompPReceiver3(CurrentTime, T,vl_ii,v0,dt,c0)
 
+global Table
+
 % Resample and interpolate the texture
 %
 
@@ -273,10 +275,23 @@ end
 
 % Interpolate the texture using the CurrentTime
 
-% InterpolatedTexture 
 
+% Root Search Implementation of the Texture Interpolation
+% ==============================================
+S = Table(1).TextureTime;
+slope = (S(end)-S(1))./(length(S)-1);
+row = 1 - (S(1)-CurrentTime)./slope;
+row = floor(row);
+if row == 0
+    row = 1; 
+end
+if row > length(S)
+    row = length(S);
+end
+InterpolatedTexture = Table(1).Texture(row,:);
+% ==============================================
 
-gl = VelocityRatio.^6.*InterpolateTexture(CurrentTime, vl_ii);
+gl = VelocityRatio.^6.*InterpolatedTexture;
 % Compute the Pressure at the receiver
 % Neglecting the receiver position for now
 %
@@ -296,10 +311,14 @@ end
 
 % Texture interpolation
 % Assume there is only one table entry..
-function [w_lInterpolated] = InterpolateTexture(CurrentTime, vl_ii)
-
-global Table
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% function [w_lInterpolated] = InterpolateTexture(CurrentTime, vl_ii)
+% 
+% global Table
+% 
 %
 %%% Linear Search Implementation with Matlab library
 % 16000Hz*5sec*10sources: 167.418678sec
@@ -322,17 +341,18 @@ global Table
 %%% Its only applicable for fixed time steps
 % 16000Hz*5sec*10sources: 123.896838sec
 %
-S = Table(1).TextureTime;
-slope = (S(end)-S(1))./(length(S)-1);
-row = 1 - (S(1)-CurrentTime)./slope;
-row = floor(row);
-if row == 0
-    row = 1; 
-end
-if row > length(S)
-    row = length(S);
-end
-w_lInterpolated = Table(1).Texture(row,:);
+% S = Table(1).TextureTime;
+% slope = (S(end)-S(1))./(length(S)-1);
+% row = 1 - (S(1)-CurrentTime)./slope;
+% row = floor(row);
+% if row == 0
+%     row = 1; 
+% end
+% if row > length(S)
+%     row = length(S);
+% end
+% w_lInterpolated = Table(1).Texture(row,:);
+
 % fprintf('=================\n')
 
 %
@@ -370,8 +390,9 @@ w_lInterpolated = Table(1).Texture(row,:);
 % w_lInterpolated  = Table(1).Texture(w_lPointer,:); 
 
 
-end
+% end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     
 
