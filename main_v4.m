@@ -273,7 +273,6 @@ end
 
 % Interpolate the texture using the CurrentTime
 gl = VelocityRatio.^6.*InterpolateTexture(CurrentTime, vl_ii);
-
 % Compute the Pressure at the receiver
 % Neglecting the receiver position for now
 %
@@ -297,37 +296,50 @@ function [w_lInterpolated] = InterpolateTexture(CurrentTime, vl_ii)
 
 global Table
 
-SearchDomain = Table(1).TextureTime;; 
-
-CurrentPointerRange=1:length(SearchDomain);
-
-while true
-    if length(SearchDomain) <= 2 
-        w_lPointer = CurrentPointerRange(1); 
-        break; 
-    end
-
-    MidPoint = ceil(length(SearchDomain)/2);
-
-%     [length(SearchDomain),MidPoint,CurrentTime,SearchDomain(MidPoint)];
-
-    if CurrentTime == SearchDomain(MidPoint)
-        w_lPointer = CurrentPointerRange(MidPoint);
-        break;
-    elseif CurrentTime > SearchDomain(MidPoint) 
-        SearchDomain = SearchDomain(MidPoint:end);
-        CurrentPointerRange = CurrentPointerRange(MidPoint:end);
-    else
-        SearchDomain = SearchDomain(1:MidPoint);
-        CurrentPointerRange = CurrentPointerRange(1:MidPoint);
-    end
-
-    % CurrentPointerRange(MidPoint)
-
+%
+%%% Linear Search Implementation with Matlab library
+%
+[row,col] = find(Table.TextureTime >= CurrentTime);
+if numel(row) ~= 0
+    w_lInterpolated = Table.Texture(row(1),:);
+else
+    w_lInterpolated = Table.Texture(end,:);
 end
+% size(Table.Texture(row(1),:))
 
 
-w_lInterpolated  = Table(1).Texture(w_lPointer,:); 
+%
+%%% Binary Search Implementation
+%
+% SearchDomain = Table(1).TextureTime;; 
+% 
+% CurrentPointerRange=1:length(SearchDomain);
+% 
+% while true
+%     if length(SearchDomain) <= 2 
+%         w_lPointer = CurrentPointerRange(1); 
+%         break; 
+%     end
+% 
+%     MidPoint = ceil(length(SearchDomain)/2);
+% 
+%     if CurrentTime == SearchDomain(MidPoint)
+%         w_lPointer = CurrentPointerRange(MidPoint);
+%         break;
+%     elseif CurrentTime > SearchDomain(MidPoint) 
+%         SearchDomain = SearchDomain(MidPoint:end);
+%         CurrentPointerRange = CurrentPointerRange(MidPoint:end);
+%     else
+%         SearchDomain = SearchDomain(1:MidPoint);
+%         CurrentPointerRange = CurrentPointerRange(1:MidPoint);
+%     end
+% 
+%     % CurrentPointerRange(MidPoint)
+% 
+% end
+% 
+% 
+% w_lInterpolated  = Table(1).Texture(w_lPointer,:); 
 
 
 end
