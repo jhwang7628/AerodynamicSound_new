@@ -167,11 +167,13 @@ vl = ObjMotion3(T);
 %%%% Can probably parallelize/vectorize this part of the code %%%%
 CurrentTime = ones(1,NumSources).*T(1);
 for ii = 1:length(T)
-    for jj = 2:NumSources
-          [CurrentTime(jj), Pl_ii] = CompPReceiver3(CurrentTime(jj), T,vl(ii,jj),v0,dt,c0);
-          Pv(ii) = Pv(ii) + Pl_ii;
-    end
+    [CurrentTime, Pl_ii] = CompPReceiver3(CurrentTime, T, vl(ii,:), v0, dt, c0);
+    Pv(ii) = sum(Pl_ii);
 end
+
+
+
+
 %
 
 % for jj = 2:NumSources
@@ -262,36 +264,31 @@ global Table
 % Resample and interpolate the texture
 %
 
-VelocityRatio = vl_ii./v0;
+VelocityRatio = vl_ii./v0; % Row vector
 
 % Time reindexing
 CurrentTime = VelocityRatio.*dt + CurrentTime; 
 
 % Looping the texture
-if CurrentTime >= max(T)
-    CurrentTime = rem(CurrentTime,T(end));
-end
+CurrentTime = rem(CurrentTime,T(end));
 
 
 % Interpolate the texture using the CurrentTime
-
-
 % Root Search Implementation of the Texture Interpolation
 % ==============================================
 S = Table(1).TextureTime;
 slope = (S(end)-S(1))./(length(S)-1);
 row = 1 - (S(1)-CurrentTime)./slope;
 row = floor(row);
-if row == 0
-    row = 1; 
-end
-if row > length(S)
-    row = length(S);
-end
+
+% row cannot be zero.
+row = row + (row==0);
+row = row + (row>length(S)).*(length(S)-row);
+
 InterpolatedTexture = Table(1).Texture(row,:);
 % ==============================================
 
-gl = VelocityRatio.^6.*InterpolatedTexture;
+gl = bsxfun(@times,VelocityRatio.^6,InterpolatedTexture.');
 % Compute the Pressure at the receiver
 % Neglecting the receiver position for now
 %
@@ -299,10 +296,7 @@ gl = VelocityRatio.^6.*InterpolatedTexture;
 rl = 0.5;
 Cl = 1/(4*pi*c0*rl^2);
 
-Pl_ii = Cl*dot(gl,rl.*ones(1,3));
-
-
-
+Pl_ii = Cl.*rl.*(sum(gl,1));
 
 end
 
