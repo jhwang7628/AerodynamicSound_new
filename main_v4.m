@@ -298,8 +298,8 @@ global Table
 
 %
 %%% Linear Search Implementation with Matlab library
-%
-[row,col] = find(Table.TextureTime >= CurrentTime);
+% 16000Hz*5sec*10sources: 167.418678sec
+[row,col] = find(Table.TextureTime >= CurrentTime, 'first');
 if numel(row) ~= 0
     w_lInterpolated = Table.Texture(row(1),:);
 else
