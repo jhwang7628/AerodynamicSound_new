@@ -1,0 +1,23 @@
+
+tic
+% SearchDomain = Table(1).TextureTime - CurrentTime;
+% toc
+% tic
+slope = (Table(1).TextureTime(end)-Table(1).TextureTime(1))./(length(Table(1).TextureTime)-1);
+% toc
+% tic
+row = 1 - (Table(1).TextureTime(1)-CurrentTime)./slope;
+% toc
+% tic
+row = floor(row);
+% toc
+% tic
+if row == 0
+    row = 1; 
+end
+if row > length(Table(1).TextureTime)
+    row = length(Table(1).TextureTime);
+end
+w_lInterpolated = Table(1).Texture(row,:);
+toc
+fprintf('=================\n')
