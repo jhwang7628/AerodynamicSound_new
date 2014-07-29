@@ -272,6 +272,10 @@ end
 
 
 % Interpolate the texture using the CurrentTime
+
+% InterpolatedTexture 
+
+
 gl = VelocityRatio.^6.*InterpolateTexture(CurrentTime, vl_ii);
 % Compute the Pressure at the receiver
 % Neglecting the receiver position for now
@@ -300,57 +304,28 @@ global Table
 %%% Linear Search Implementation with Matlab library
 % 16000Hz*5sec*10sources: 167.418678sec
 
-fprintf('=================\n')
-tic
-[row,col] = find(Table.TextureTime >= CurrentTime, 1);
-if numel(row) ~= 0
-    w_lInterpolated = Table.Texture(row,:);
-else
-    w_lInterpolated = Table.Texture(end,:);
-end
-toc
-row0=row;
+% fprintf('=================\n')
+% tic
+% [row,col] = find(Table.TextureTime >= CurrentTime, 1);
+% if numel(row) ~= 0
+%     w_lInterpolated = Table.Texture(row,:);
+% else
+%     w_lInterpolated = Table.Texture(end,:);
+% end
+% toc
+% row0=row;
 %
 
 
 %
 %%% Root Searching Implementation
 %%% Its only applicable for fixed time steps
-% 16000Hz*5sec*10sources: 138.963939sec
+% 16000Hz*5sec*10sources: 123.896838sec
 %
-%
-tic
-SearchDomain = Table(1).TextureTime - CurrentTime;
-slope = (SearchDomain(end)-SearchDomain(1))./(length(Table(1).TextureTime)-1);
-row = 1 - SearchDomain(1)./slope;
-row = floor(row);
-if row == 0
-    row = 1; 
-end
-if row > length(Table(1).TextureTime)
-    row = length(Table(1).TextureTime);
-end
-w_lInterpolated = Table(1).Texture(row,:);
-toc
-row1=row;
-
-
-tic
 S = Table(1).TextureTime;
-% toc
-% tic
-% % SearchDomain = S - CurrentTime;
-% toc
-% tic
 slope = (S(end)-S(1))./(length(S)-1);
-% toc
-% tic
 row = 1 - (S(1)-CurrentTime)./slope;
-% toc
-% tic
 row = floor(row);
-% toc
-% tic
 if row == 0
     row = 1; 
 end
@@ -358,9 +333,7 @@ if row > length(S)
     row = length(S);
 end
 w_lInterpolated = Table(1).Texture(row,:);
-toc
-[row0,row1,row]
-fprintf('=================\n')
+% fprintf('=================\n')
 
 %
 %%% Binary Search Implementation
