@@ -145,6 +145,8 @@ Table(CurrentTableEntry).Texture = w_l;
 end
 
 
+%%%%%%%%
+
 function Pv = SoundPressure(SampFreq)
 
 global Table NumSources
@@ -168,32 +170,15 @@ for ii = 1:length(T)
     Pv(ii) = sum(Pl_ii);
 end
 
-player = audioplayer(Pv,SampFreq);
+
+end
 
 
 
+%%%%%%%%
 
-%
-
-% for jj = 2:NumSources
-%     tic
-%   CurrentTime = T(1);
-%   fprintf('Calculating the pressure of source # %2.0i \n', jj)
-%   for ii = 1:length(T)
-%       [CurrentTime, Pv(ii)] = CompPReceiver3(CurrentTime, vl(ii,jj));
-%   end
-%   toc
-% 
-%   
-% end
-
-% gl_g = zeros(length(T),NumSources,3); 
-
-
-% Nested function
 % ObjMotion3 describe the object motion, copied from the file ObjMotion.m
 %
-end
 function vl = ObjMotion3(T,flag)
 
 global NumSources
@@ -255,7 +240,10 @@ global NumSources
 
 end
 
-% Nested function
+
+
+%%%%%%%%
+
 function [CurrentTime, Pl_ii] = CompPReceiver3(CurrentTime, T,vl_ii,v0,dt,c0)
 
 global Table
@@ -301,6 +289,8 @@ end
 
 
 
+
+%%%%%%%%
 
 % Texture interpolation
 % Assume there is only one table entry..
@@ -386,21 +376,4 @@ end
 % end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
